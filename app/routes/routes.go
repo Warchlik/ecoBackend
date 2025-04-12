@@ -1,7 +1,7 @@
 package routes
 
 import (
-	// "eco-backend/app/controllers"
+	"eco-backend/app/controllers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,7 +13,7 @@ func SetupRoutes(router *gin.Engine) {
 			c.JSON(200, gin.H{"message": "pong"})
 		})
 
-		// api.POST("/register", controllers.Register)
-		// api.POST("/login", controllers.Login)
+		api.POST("/register", controllers.Register)
+		api.POST("/login", controllers.Login)
 	}
 }
