@@ -19,13 +19,17 @@ func Connect() {
 	password := config.GetEnv("DB_PASSWORD", "")
 	dbname := config.GetEnv("DB_NAME", "eco_db")
 
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable search_path=public",
 		host, port, user, password, dbname)
+
+	log.Println(dsn)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Nie można połączyć się z bazą danych: ", err)
 	}
+
+	log.Println(db)
 
 	DB = db
 	log.Println("✅ Połączono z bazą danych")

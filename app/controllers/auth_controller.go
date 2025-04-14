@@ -12,12 +12,12 @@ import (
 
 func Register(c *gin.Context) {
 	var req requests.RegisterRequest
+
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Sprawdź czy email już istnieje
 	var existing models.User
 	database.DB.Where("email = ?", req.Email).First(&existing)
 	if existing.ID != 0 {
@@ -25,18 +25,10 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	// Hash hasła
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd serwera"})
-		return
-	}
-
-	// Stwórz użytkownika
 	user := models.User{
 		Name:     req.Name,
 		Email:    req.Email,
-		Password: string(hashedPassword),
+		Password: req.Password,
 	}
 
 	if err := database.DB.Create(&user).Error; err != nil {

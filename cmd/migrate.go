@@ -7,7 +7,7 @@ import (
 )
 
 var path = "app/database/migrations"
-var database = "postgres://postgres:@localhost:5432/eco_db?sslmode=disable"
+var database = "postgres://postgres:@localhost:5432/eco_db?sslmode=disable&search_path=public"
 
 func main() {
 	if len(os.Args) < 2 {
