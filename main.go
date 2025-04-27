@@ -12,9 +12,9 @@ func main() {
 	config.LoadEnv()
 	database.Connect()
 
-	r := gin.Default()
-	routes.SetupRoutes(r)
+	router := gin.Default()
+	routes.SetupRoutes(router)
 
 	port := config.GetEnv("APP_PORT", "8080")
-	r.Run(":" + port)
+	router.Run(":" + port)
 }

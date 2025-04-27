@@ -1,16 +1,15 @@
 package database
 
 import (
+	"database/sql"
+	"eco-backend/config"
 	"fmt"
 	"log"
 
-	"eco-backend/config"
-
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-var DB *gorm.DB
+var DB *sql.DB
 
 func Connect() {
 	host := config.GetEnv("DB_HOST", "localhost")
@@ -19,18 +18,22 @@ func Connect() {
 	password := config.GetEnv("DB_PASSWORD", "")
 	dbname := config.GetEnv("DB_NAME", "eco_db")
 
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable search_path=public",
-		host, port, user, password, dbname)
+	dsn := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=public",
+		user, password, host, port, dbname,
+	)
 
-	log.Println(dsn)
+	log.Printf("Connecting to database: %s\n", dsn)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := sql.Open("pgx", dsn)
 	if err != nil {
-		log.Fatal("Nie można połączyć się z bazą danych: ", err)
+		log.Fatalf("❌ Błąd otwarcia połączenia: %v", err)
 	}
 
-	log.Println(db)
+	if err := db.Ping(); err != nil {
+		log.Fatalf("❌ Nieudane pingowanie bazy: %v", err)
+	}
 
 	DB = db
-	log.Println("✅ Połączono z bazą danych")
+	log.Println("✅ Połączono z bazą danych (pgx/stdlib)")
 }
